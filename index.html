@@ -1,0 +1,247 @@
+<html>
+
+<head> 
+  
+  <title>QR-CODE Generator</title>
+  
+  
+  <!-- CSS Styling begins from here -->
+  
+  
+  <style>
+   * {
+    margin: 0;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+  }
+  
+  body {
+    display: flex;
+    min-height: 100vh;
+    align-items: center;
+    background-image: url('qr_bg.jpg');
+    justify-content: center;
+  }
+  
+  h1{
+    background-color: #adadad;
+    height: 50px;
+    text-align: center;
+    padding-top: 10px;
+  }
+  
+  .qr_box {
+    position: relative;
+    height: 300px;
+    width: 500px;
+    background: #cecccc;
+    border-radius: 10px;
+    border: 2px solid rgb(0, 0, 0);
+    padding: 20px 25px 0;  
+    box-shadow: 0 0 50px rgba(246, 248, 246, 0.5),
+    0 0 50px rgba(231, 238, 231, 0.4), 0 0 50px rgba(238, 239, 238, 0.3),
+    0 0 50px rgba(235, 238, 235, 0.2);
+  }
+ 
+  
+  .qr_box.active {
+    height: 600px;
+  }
+  
+  header h1 {
+    font-size: 21px;
+    padding: 15px;
+  }
+  
+  header p {
+    margin-top: 5px;
+    color: #3f3f3f;
+    text-align: center;
+    font-size: 16px;
+  }
+  
+  .qr_box .form {
+    margin: 20px 0 25px;
+  }
+  
+  .form :where(input, button) {
+    width: 100%;
+    height: 55px;
+    border-radius: 50px;
+  }
+  
+  .form input {
+    font-size: 18px;
+    padding: 0 17px;
+    border: 1px solid #000000;
+  }
+  
+  .form input::placeholder {
+    color: #827f7f;
+  }
+  
+  .form button {
+    font-weight: bold;
+    color: #fff;
+    cursor: pointer;
+    margin-top: 20px;
+    font-size: 18px;
+    background: #42a22b;
+    text-align: center;
+    cursor:pointer;
+    -webkit-transition-duration: 0.3s;
+    transition-duration: 0.3s;
+    -webkit-transition-property:box-shadow,transform ;
+    transition-property:box-shadow,transform ;
+  } 
+
+
+  .form button:hover, .form button:focus, .form button:active{
+ 
+    -webkit-transform: scale(1.1);
+    transform: scale(1.1);
+  }
+
+  .download button {
+    display: none;  /* The download button is initially hidden */
+    font-weight: bold;
+    color: #fff;
+    margin-top: 20px;
+    font-size: 18px;
+    background: #2d86ce;
+    text-align: center;
+    cursor:pointer;
+    -webkit-transition-duration: 0.3s;
+    transition-duration: 0.3s;
+    -webkit-transition-property:box-shadow,transform ;
+    transition-property:box-shadow,transform ;
+  }
+
+  .qr_box.active .download button {
+    display: block;
+  }
+  
+  .download button:hover, .download button:focus, .download button:active{
+
+    -webkit-transform: scale(1.1);
+    transform: scale(1.1);
+  }
+  
+  .qr-code {
+    opacity: 0;
+    display: flex;
+    padding: 33px;
+    border-radius: 20px;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #65afdb;
+  }
+
+    
+  .qr_box.active .qr-code {
+    opacity: 1;
+    pointer-events: auto;
+
+  }
+  
+  .qr-code img {
+    width: 170px;
+   
+  }
+  
+  .foot {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background-color:rgb(28, 22, 64);
+    padding: 7px;
+    color: rgb(206, 205, 205);
+    text-align: center;
+    
+  }
+  </style>
+
+
+  <!-- CSS Styling ends here -->
+
+
+</head>
+
+
+ <!-- HTML Body begins from here -->
+
+
+<body>
+  <div class="qr_box">
+    <header>
+      <h1>QR Code Generator</h1>
+      <p>Paste URL or Enter TEXT to create QR-Code</p>
+    </header>
+    <div class="form">
+      <input type="text" placeholder="Enter URL or TEXT">
+      <button>Generate QR Code</button>
+      <div class="download">
+        <button id="download">Download QR</button>
+      </div>
+    </div>
+    <div class="qr-code">
+      <img src="" alt="qr-code">
+    </div>
+  </div>
+  <div class="foot">
+    <footer>&copy; QR Code Generator. All rights reserved.</footer>
+  </div>
+
+
+   <!-- HTML Body ends here -->
+
+
+   <!-- JavaScript begins from here -->
+
+  
+  <script>
+    const qr_box = document.querySelector(".qr_box"),
+    qrInput = qr_box.querySelector(".form input"),
+    generateBtn = qr_box.querySelector(".form button"),
+    qrImg = qr_box.querySelector(".qr-code img");
+    let preValue;
+    const downloadBtn=document.querySelector(".download");
+
+  generateBtn.addEventListener("click", () => {
+    let qrValue = qrInput.value.trim();
+    if(!qrValue || preValue === qrValue) return;
+    preValue = qrValue;
+    generateBtn.innerText = "Generating QR Code...";
+    qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${qrValue}`;
+    qrImg.addEventListener("load", () => {
+        qr_box.classList.add("active");
+        generateBtn.innerText = "Generate QR Code";
+        document.querySelector(".download button").style.display = "block";
+    });
+});
+
+  qrInput.addEventListener("keyup", () => {      /*keyup is an event in JavaScript that is triggered when a keyboard key is released.*/
+    if(!qrInput.value.trim()) {
+        qr_box.classList.remove("active");
+        preValue = "";
+    }
+    document.querySelector(".download button").style.display = "none";
+});
+
+  downloadBtn.addEventListener("click", async ()=>{
+    const response=await fetch(qrImg.src);
+    const blob=await response.blob();
+    const downloadLink=document.createElement("a");
+    downloadLink.href=URL.createObjectURL(blob);
+    downloadLink.download="qrcode.jpg";
+    downloadLink.click();
+});
+  </script>
+  
+
+  <!-- JavaScript ends here -->
+
+  
+</body>
+
+</html>
